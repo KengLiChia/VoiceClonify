@@ -51,9 +51,9 @@ class AudioFS:
             f.write(audio)
         
         subprocess.call(
-            'ffmpeg -i {} -ab 160k -ac 2 -ar 44100 -vn {}.wav -y'.format(
-                webm_file_name, path
-            ),
+            'ffmpeg -i {} -ab 160k -ac 2 -ar 44100 -vn {}.wav -y'.format( #recording studio and a sample rate of 44.1kHz (1 is mono, 2 is stereo)
+                webm_file_name, path 
+            ), 
             shell=True
         )
         os.remove(webm_file_name)
