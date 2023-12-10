@@ -24,11 +24,11 @@ from shutil import copyfile
 from shutil import rmtree
 
 # Setup Directory Data
-cwd = os.path.dirname(os.path.abspath(__file__)) #Gets current working directory of this file
+cwd = os.path.dirname(os.path.abspath(__file__))
 output_dir = os.path.join(cwd, "dataset")
-output_dir_audio = os.path.join(cwd, "audio")
-output_dir_audio_temp= os.path.join(cwd, "audio_temp")
-output_dir_speech = os.path.join(cwd, "speech")
+output_dir_audio = ""
+output_dir_audio_temp=""
+output_dir_speech = ""
 
 # Create folders needed for ljspeech
 def create_folders():

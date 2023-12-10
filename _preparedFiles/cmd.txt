@@ -1,3 +1,0 @@
-# For computing the statistics of the dataset (recommended to run first before training)
-python .\compute_statistics.py --config_path C:\Users\HP\Documents\GitHub\SecureVoiceAuth\_preparedFiles\config.json --out_path C:\Users\HP\Documents\GitHub\SecureVoiceAuth\_preparedFiles\stats.npy 
-
