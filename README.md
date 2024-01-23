@@ -62,7 +62,7 @@ This project is inspired by [Thorsten Voice](https://www.youtube.com/watch?v=bJj
 
 6. Build and run for creating datasets
     ```bash
-    cd mimic-recording-studio
+    cd mimic-recording-studio-master
     docker-compose up
     ```
 
