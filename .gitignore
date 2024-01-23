@@ -7,3 +7,9 @@ Include/
 Lib/
 Scripts/
 share/
+
+#Training space
+kengli_training_space/
+
+#Training dataset
+dataset/
