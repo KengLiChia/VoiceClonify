@@ -97,5 +97,10 @@ python .\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonif
 
 400k steps recommended
 
+## Install Gradio
+```bash
+pip install gradio
+```
+
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
