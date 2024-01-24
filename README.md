@@ -82,5 +82,20 @@ Under the training folder,
 ```bash
 tensorboard --logdir=.
 ```
+
+## Test trained voice
+
+Below is an example to test your trained voice model
+```bash
+python .\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits_ljspeech-January-23-2024_02+16AM-23066a7\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits_ljspeech-January-23-2024_02+16AM-23066a7\best_model.pth --text "Hello, I am testing my cloned voice!" --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\test.wav
+```
+
+## Training specifications (for reference)
+
+1) steps per epoch = len(train_samples) // config.batch_size
+2) total steps = steps per epoch * config.epochs
+
+400k steps recommended
+
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
