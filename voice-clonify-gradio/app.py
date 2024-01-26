@@ -1,3 +1,4 @@
+from TTS.api import TTS as tts
 import gradio as gr
 
 theme = gr.themes.Default(
@@ -89,7 +90,28 @@ with gr.Blocks(theme=theme, title="Voice Clonify") as demo:
 
 
     with gr.Tab("Train XTTS"):
-        
-        pass
+        # Components for "Train XTTS" tab
+        speaker_wav_file = gr.Audio(label="Speaker WAV File", sources=["upload"], type="filepath", format=["wav"])
+        language_xtts = gr.Textbox(label="Language", placeholder="en", interactive=False)
+        output_file_path = gr.Textbox(label="Output File Path", placeholder="output.wav")
+        submit_button_xtts = gr.Button("Submit XTTS", variant="primary")
+        output_xtts = gr.Textbox(label="Output XTTS")
+
+        def run_voice_clonify_xtts():
+            # Get values from Gradio components for "Train XTTS" tab
+            speaker_wav_path = speaker_wav_file
+            language_xtts_value = language_xtts.value
+            output_file_path_value = output_file_path.value
+
+            # Create TTS object
+            tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2", gpu=False)
+
+            # Generate speech by cloning a voice using default settings
+            tts.tts_to_file(text="", file_path=output_file_path_value, speaker_wav=[speaker_wav_path], language=language_xtts_value)
+
+            output_text_xtts = f"Speech generated and saved to {output_file_path_value}"
+            return output_text_xtts
+
+        submit_button_xtts.click(run_voice_clonify_xtts, outputs=[output_xtts])
 
 demo.launch()
