@@ -4,24 +4,6 @@ VoiceClonify is an open-source voice cloning application designed to allow users
 
 This project is inspired by [Thorsten Voice](https://www.youtube.com/watch?v=bJjzSo_fOS8&ab_channel=Thorsten-Voice).
 
-## Features
-
-### 1. Voice Cloning
-
-- **User-friendly Interface:** Navigate through the application with an intuitive design that simplifies the voice cloning process.
-
-### 2. Real-time Visualization
-
-- **Training Visualization:** Visualize the process of model training your voice in real-time.
-
-### 3. Voice Comparison
-
-- **Similarity Assessment:** Utilize algorithms to determine similarities and differences between the original and cloned voices.
-
-### 4. Text-to-Speech Generation
-
-- **Versatile Text Input:** Input any text and listen to the synthesized speech using the cloned voice.
-
 ## Prerequisites 
 
 1. 🐸 [TTS](https://github.com/coqui-ai/TTS) supports [Python >=3.7 <3.11.0](https://www.python.org/downloads/) and tested on Ubuntu 18.10, 19.10, 20.10, Windows 10, 11.
@@ -83,19 +65,31 @@ Under the training folder,
 tensorboard --logdir=.
 ```
 
+## Training
+
+```bash
+python ..\train_fast_speech.py
+```
+
+## Finetuning
+
+```bash
+python .\train_fast_speech.py --restore_path "C:\Users\krist\AppData\Local\tts\tts_models--en--ljspeech--fast_pitch\model_file.pth" --coqpit.run_name "fast_speech_finetuning"
+```
+
+## Resume training
+
+```bash
+python ..\train_fast_speech.py --continue_path .
+```
+
 ## Test trained voice
 
 Below is an example to test your trained voice model
+
 ```bash
-python .\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits_ljspeech-January-23-2024_02+16AM-23066a7\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits_ljspeech-January-23-2024_02+16AM-23066a7\best_model.pth --text "Hello, I am testing my cloned voice!" --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\test.wav
+python .\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits-default-phonemizer\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits-default-phonemizer\checkpoint_50000.pth --text "The quick brown fox jumps over the lazy dog!" --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vitts.wav
 ```
-
-## Training specifications (for reference)
-
-1) steps per epoch = len(train_samples) // config.batch_size
-2) total steps = steps per epoch * config.epochs
-
-400k steps recommended
 
 ## Install Gradio
 ```bash
