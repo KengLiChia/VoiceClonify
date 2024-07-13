@@ -1,5 +1,0 @@
-flask
-flask-cors
-peewee
-pydub
-gunicorn
