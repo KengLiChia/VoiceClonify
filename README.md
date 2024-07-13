@@ -74,7 +74,7 @@ python ..\train_fast_speech.py
 ## Finetuning
 
 ```bash
-python .\train_fast_speech.py --restore_path "C:\Users\krist\AppData\Local\tts\tts_models--en--ljspeech--fast_pitch\model_file.pth" --coqpit.run_name "fast_speech_finetuning"
+python .\train_fast_pitch.py --restore_path "C:\Users\krist\AppData\Local\tts\tts_models--en--ljspeech--fast_pitch\model_file.pth" --coqpit.run_name "fast_pitch_finetuning"
 ```
 
 ## Resume training
@@ -90,6 +90,10 @@ Below is an example to test your trained voice model
 ```bash
 python .\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits-default-phonemizer\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits-default-phonemizer\checkpoint_50000.pth --text "The quick brown fox jumps over the lazy dog!" --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vitts.wav
 ```
+python .\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\my_glow_tts_finetuning-April-07-2024_02+58AM-310580b\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\my_glow_tts_finetuning-April-07-2024_02+58AM-310580b\checkpoint_510000.pth --text "The quick brown fox jumps over the lazy dog!" --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\glowtts.wav
+
+python .\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_pitch_finetuning-June-02-2024_01+35AM-0ae693a\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_pitch_finetuning-June-02-2024_01+35AM-0ae693a\best_model_259344.pth --text "The quick brown fox jumps over the lazy dog!" --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\test.wav
+
 
 ## Install Gradio
 ```bash
