@@ -37,7 +37,8 @@ def allowed_file(filename):
 def save_uploaded_csv(file):
     global corpus_name
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
+        filename = secure_filename(file.filename.split('\\')[-1]) # this get the actual name of the file from gradio tmp
+        print(filename)
         filepath = os.path.join(prompts_dir, filename)
         file.save(filepath)
         corpus_name = filename # set corpus_name to filename e.g. corpus.csv

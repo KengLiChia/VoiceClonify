@@ -1,6 +1,6 @@
 # VoiceClonify
 
-VoiceClonify is an open-source voice cloning application designed to allow users to clone their own voices or mimic any desired voice for text-to-speech generation.
+VoiceClonify is an open-source voice cloning application designed to allow users to train and clone their own voices. 
 
 This project is inspired by [Thorsten Voice](https://www.youtube.com/watch?v=bJjzSo_fOS8&ab_channel=Thorsten-Voice).
 

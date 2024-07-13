@@ -94,7 +94,6 @@ class PromptUpload(MethodView):
             file = request.files['file'] # retrieve file that have been uploaded. 
             if file.filename == '':
                 return jsonify(success=False, message="No file selected")
-
             response = prompt_api.upload_csv(file)
             return jsonify(success=response.success, message=response.message)
         except Exception as e:
@@ -103,28 +102,28 @@ class PromptUpload(MethodView):
 # registering apis
 user_view = Users.as_view('user')
 app.add_url_rule(
-    '/api/user/',
+    '/api/user',
     view_func=user_view,
     methods=['POST', 'GET']
 )
 
 audio_view = Audio.as_view('audio')
 app.add_url_rule(
-    '/api/audio/',
+    '/api/audio',
     view_func=audio_view,
     methods=['POST', 'GET']
 )
 
 prompt_view = Prompts.as_view('prompt')
 app.add_url_rule(
-    '/api/prompt/',
+    '/api/prompt',
     view_func=prompt_view,
     methods=['GET']
 )
 
 prompt_upload_view = PromptUpload.as_view('prompt_upload')
 app.add_url_rule(
-    '/api/upload_prompt/',
+    '/api/upload_prompt',
     view_func=prompt_upload_view,
-    methods=['POST']
+    methods=['POST'],
 )
