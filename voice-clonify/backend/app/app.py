@@ -87,6 +87,18 @@ class Prompts(MethodView):
         else:
             return jsonify(success=False, messsage="failed to get prompt")
 
+class PromptUpload(MethodView):
+    
+    def post(self):
+        try:
+            file = request.files['file'] # retrieve file that have been uploaded. 
+            if file.filename == '':
+                return jsonify(success=False, message="No file selected")
+
+            response = prompt_api.upload_csv(file)
+            return jsonify(success=response.success, message=response.message)
+        except Exception as e:
+            return jsonify(success=False, message=str(e))
 
 # registering apis
 user_view = Users.as_view('user')
@@ -108,4 +120,11 @@ app.add_url_rule(
     '/api/prompt/',
     view_func=prompt_view,
     methods=['GET']
+)
+
+prompt_upload_view = PromptUpload.as_view('prompt_upload')
+app.add_url_rule(
+    '/api/upload_prompt/',
+    view_func=prompt_upload_view,
+    methods=['POST']
 )

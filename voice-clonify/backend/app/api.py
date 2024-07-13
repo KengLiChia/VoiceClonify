@@ -1,7 +1,7 @@
 import os
 from .db import DB
 from .protocol import response
-from .file_system import AudioFS, PromptsFS, temp_path
+from .file_system import AudioFS, PromptsFS, temp_path, save_uploaded_csv
 from .audio import Audio
 import random
 
@@ -135,6 +135,21 @@ class PromptAPI:
 
     def __init__(self):
         self.user_api = UserAPI()
+        
+    def upload_csv(self, file) -> response:
+        """Upload a CSV file containing prompts.
+
+        Args:
+            file (FileStorage): Uploaded file object from Flask.
+
+        Returns:
+            response: Response object indicating success or failure of the upload.
+        """
+        try:
+            save_uploaded_csv(file)
+            return response(True, message="CSV file uploaded successfully")
+        except ValueError as e:
+            return response(False, message=str(e)) 
 
     def get_prompt(self, uuid: str) -> response:
         """Get next prompt to be recorded.

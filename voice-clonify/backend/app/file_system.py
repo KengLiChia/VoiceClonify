@@ -7,19 +7,16 @@ import subprocess
 import os
 from subprocess import DEVNULL
 from .protocol import response
+from werkzeug.utils import secure_filename
 
-corpus_name = os.environ["CORPUS"]
+ALLOWED_EXTENSIONS = {'csv'}
+corpus_name = "english_corpus.csv" # This is default filename
 
 prompts_dir = prompts_path = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "../prompts/"
 )
 os.makedirs(prompts_dir, exist_ok=True)
-prompts_path = os.path.join(
-    prompts_dir,
-    "../prompts",
-    corpus_name
-)
 
 audio_dir = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
@@ -33,6 +30,20 @@ temp_path = os.path.join(
 )
 os.makedirs(temp_path, exist_ok=True)
 
+
+def allowed_file(filename):
+    return '.' in filename and filename.lower().rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+def save_uploaded_csv(file):
+    global corpus_name
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(prompts_dir, filename)
+        file.save(filepath)
+        corpus_name = filename # set corpus_name to filename e.g. corpus.csv
+        return filepath
+    else:
+        raise ValueError("Invalid file format. Please upload a CSV file.")
 
 class AudioFS:
     """API Class for audio handling."""
@@ -113,6 +124,7 @@ class PromptsFS:
     """API Class for Prompt handling."""
     def __init__(self):
         self.data = []
+        prompts_path = os.path.join(prompts_dir, corpus_name)
         with open(prompts_path, 'r', encoding='utf8') as f:
             prompts = csv.reader(f, delimiter="\t")
             for p in prompts:
