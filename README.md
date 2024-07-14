@@ -110,6 +110,28 @@ python .\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonif
 pip install gradio
 ```
 
+## Setup Voice Clonify
+
+1. Install the dependencies
+
+```bash
+  pip install -r requirements.txt
+```
+
+2. Run the backend server
+
+```bash
+  python backend/app.py
+```
+
+3. Run the Gradio frontend
+
+```bash
+   python frontend/gradio_frontend.py
+```
+
+4. Open the Gradio link in your browser to interact with the applicaton.
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
