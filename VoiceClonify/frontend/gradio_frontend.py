@@ -62,6 +62,8 @@ def upload_dataset(files, username, password):
         return "", "Invalid username or password."
     
     base_folder = "../datasets"
+    os.makedirs(base_folder, exist_ok=True)
+    
     # Create a new folder for the current upload
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     user_folder = os.path.join(base_folder, f"{username}_{timestamp}")
@@ -98,9 +100,6 @@ def run_voice_clonify(run_name, batch_size, eval_batch_size, batch_group_size, n
         "cudnn_benchmark": cudnn_benchmark,
         "test_sentences": test_sentences.split("\n"),
     }
-
-    print("TEST")
-    print(config_params)
 
     response = requests.post("http://localhost:5000/train", json=config_params)
     if response.status_code == 200:
