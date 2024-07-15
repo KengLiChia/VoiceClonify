@@ -1,4 +1,5 @@
 import os
+import time
 from trainer import Trainer, TrainerArgs
 from TTS.tts.configs.shared_configs import BaseDatasetConfig
 from TTS.tts.configs.vits_config import VitsConfig
@@ -6,7 +7,7 @@ from TTS.tts.datasets import load_tts_samples
 from TTS.tts.models.vits import Vits, VitsAudioConfig
 from TTS.tts.utils.text.tokenizer import TTSTokenizer
 from TTS.utils.audio import AudioProcessor
-
+from multiprocessing import Queue
 
 def find_metadata_file(dataset_path):
     print("Looking for metadata file in:", dataset_path)
@@ -17,13 +18,18 @@ def find_metadata_file(dataset_path):
             return metadata_path
     raise FileNotFoundError("No metadata CSV file found in the dataset directory.")
 
-
-def train_vits(params):
-    output_path = os.path.dirname(os.path.abspath(__file__))
+def train_vits(params, queue):
+    base_output_path = os.path.dirname(os.path.abspath(__file__))
+    run_name = params.get("run_name", "vits_ljspeech")
+    timestamp = time.strftime("%Y%m%d_%H%M%S")
+    output_path = os.path.join(base_output_path, f"{run_name}_{timestamp}")
+    
+    os.makedirs(output_path, exist_ok=True)
+    
     dataset_path = os.path.abspath(params.get("datasets"))
     dataset_config = BaseDatasetConfig(
         formatter="ljspeech", 
-        meta_file_train = find_metadata_file(dataset_path), 
+        meta_file_train=find_metadata_file(dataset_path), 
         path=params.get("dataset_path", "C:\\Users\\krist\\Documents\\GitHub\\VoiceClonify\\dataset\\LJSpeech-1.1")
     )
     audio_config = VitsAudioConfig(
@@ -32,7 +38,7 @@ def train_vits(params):
     
     config = VitsConfig(
         audio=audio_config,
-        run_name=params.get("run_name", "vits_ljspeech"),
+        run_name=run_name,
         batch_size=params.get("batch_size", 32),
         eval_batch_size=params.get("eval_batch_size", 16),
         batch_group_size=params.get("batch_group_size", 5),
@@ -79,10 +85,13 @@ def train_vits(params):
         eval_samples=eval_samples,
     )
     trainer.fit()
+    queue.put(output_path)  # Put the unique output_path in the queue for Flask to retrieve
+    print(output_path)
 
-from multiprocessing import Process, freeze_support
 if __name__ == '__main__':
+    from multiprocessing import freeze_support, Queue
     freeze_support()
+    queue = Queue()
     params = {
         "run_name": "vits_ljspeech",
         "batch_size": 32,
@@ -107,4 +116,5 @@ if __name__ == '__main__':
         "test_sentences": ["The quick brown fox jumps over the lazy dog."],
         "dataset_path": "C:\\Users\\krist\\Documents\\GitHub\\VoiceClonify\\dataset\\LJSpeech-1.1"
     }
-    train_vits(params)
+    train_vits(params, queue)
+    print("Output path:", queue.get())

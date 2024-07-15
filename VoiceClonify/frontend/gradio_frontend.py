@@ -220,7 +220,7 @@ with gr.Blocks(theme=theme, title="Voice Clonify") as demo:
                 with gr.Column(scale=1, min_width=600):
                     download_output = gr.File(label="Download Output")
                 with gr.Column(scale=1, min_width=600):
-                    download_button = gr.Button("Download", variant="primary")
+                    download_button = gr.Button("Retrieve Output", variant="primary")
 
             inputs = [
                 run_name, batch_size, eval_batch_size, batch_group_size, num_loader_workers, run_eval,
