@@ -17,3 +17,5 @@ datasets
 
 # Output files
 output
+generated_audios
+model_uploads

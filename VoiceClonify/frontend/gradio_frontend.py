@@ -14,12 +14,14 @@ theme = gr.themes.Default(
 
 USER_CREDENTIALS_FILE = "./user_credentials.txt"
 
+# Password hashing and checking
 def hash_password(password):
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
 def check_password(stored_password, provided_password):
     return bcrypt.checkpw(provided_password.encode('utf-8'), stored_password.encode('utf-8'))
 
+# Register user and authentication functions
 def register_user(username, password):
     hashed_password = hash_password(password).decode('utf-8')
     with open(USER_CREDENTIALS_FILE, 'a') as file:
@@ -57,6 +59,7 @@ def handle_credentials(username, password, action):
         else:
             return "Invalid username or password.", False, action
 
+# Upload Dataset
 def upload_dataset(files, username, password):
     if not check_user_credentials(username, password):
         return "", "Invalid username or password."
@@ -67,36 +70,29 @@ def upload_dataset(files, username, password):
     base_folder = "../datasets"
     os.makedirs(base_folder, exist_ok=True)
     
-    # Create a new folder for the current upload
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     user_folder = os.path.join(base_folder, f"{username}_{timestamp}")
     os.makedirs(user_folder, exist_ok=True)
     
-    # Copy the uploaded files to the new folder
     for file in files:
         shutil.copyfile(file.name, os.path.join(user_folder, os.path.basename(file.name)))
     
     return user_folder, f"Dataset uploaded successfully to {user_folder}!"
 
+# Run voice cloning
 def run_voice_clonify(run_name, batch_size, eval_batch_size, batch_group_size, num_loader_workers, run_eval, 
                       num_eval_loader_workers, test_delay_epochs, epochs, text_cleaner, use_phonemes, phoneme_language, 
                       compute_input_seq_cache, print_step, print_eval, mixed_precision, 
                       dataset_path, cudnn_benchmark, test_sentences):
     missing_fields = []
-    if not run_name:
-        missing_fields.append("run_name")
-    if not batch_size:
-        missing_fields.append("batch_size")
-    if not batch_group_size:
-        missing_fields.append("batch_group_size")
-    if not num_loader_workers:
-        missing_fields.append("num_loader_workers")
-    if not epochs:
-        missing_fields.append("epochs")
-    if not text_cleaner:
-        missing_fields.append("text_cleaner")
-    if not dataset_path:
-        missing_fields.append("dataset_path")
+    required_fields = [("run_name", run_name), ("batch_size", batch_size), ("batch_group_size", batch_group_size),
+                       ("num_loader_workers", num_loader_workers), ("epochs", epochs), 
+                       ("text_cleaner", text_cleaner), ("dataset_path", dataset_path)]
+    
+    for field, value in required_fields:
+        if not value:
+            missing_fields.append(field)
+
     if missing_fields:
         return f"Please ensure the following fields are filled: {', '.join(missing_fields)}", ""
     
@@ -129,6 +125,7 @@ def run_voice_clonify(run_name, batch_size, eval_batch_size, batch_group_size, n
     else:
         return f"Training failed with status code: {response.status_code}\n{response.text}", ""
 
+# Zip generated models for users
 def zip_directory(output_path):
     zip_file = f"{output_path}.zip"
     shutil.make_archive(output_path, 'zip', output_path)
@@ -137,6 +134,24 @@ def zip_directory(output_path):
 def download_zip(output_path):
     zip_file = zip_directory(output_path)
     return zip_file
+
+# Synthesize voice
+def synthesize_voice(config_file, model_file, text):
+    files = {
+        'config_file': open(config_file.name, 'rb'),
+        'model_file': open(model_file.name, 'rb')
+    }
+    data = {
+        'text': text
+    }
+ 
+    response = requests.post("http://localhost:5000/synthesize", files=files, data=data)
+    if response.status_code == 200:
+        data = response.json()
+        return data["output_path"], f"Voice synthesis successful! Output path: {data['output_path']}"
+    else:
+        return "", f"Voice synthesis failed with status code: {response.status_code}"
+
 
 with gr.Blocks(theme=theme, title="Voice Clonify") as demo:
     gr.Markdown(
@@ -233,11 +248,39 @@ with gr.Blocks(theme=theme, title="Voice Clonify") as demo:
             button.click(run_voice_clonify, inputs=inputs, outputs=outputs)
             download_button.click(download_zip, inputs=[output_path], outputs=[download_output])
 
+    with gr.Tab("Synthesize Voice") as synthesize_tab:
+        synthesize_column = gr.Column(visible=True)
+        with synthesize_column:
+            gr.Markdown(
+                """
+                # Synthesize Voice
+                Provide the necessary inputs to generate a synthesized voice.
+                """
+            )
+            config_file = gr.File(label="Config File", file_types=['.json'])
+            model_file = gr.File(label="Model File", file_types=['.pth'])
+            text = gr.Textbox(label="Text", placeholder="Enter the text to synthesize")
+
+            synthesize_button = gr.Button(value="Synthesize", variant="primary")
+            synthesize_status = gr.Textbox(label="Status", interactive=False)
+            output_path = gr.Textbox(label="Output Path")
+            audio_output = gr.Audio(label="Generated Audio", interactive=False)
+            
+
+            def handle_synthesize_voice(config_file, model_file, text):
+                if not all([config_file, model_file, text]):
+                    return None, "Please provide all three fields", None
+    
+                path, status = synthesize_voice(config_file, model_file, text)
+                return path, status, path if path else None
+
+            synthesize_button.click(handle_synthesize_voice, inputs=[config_file, model_file, text], outputs=[output_path, synthesize_status])
+
     def toggle_visibility(login_status, action_status):
         if action_status == "Sign In" and login_status:
-            return [gr.update(visible=True), gr.update(visible=True)]
-        return [gr.update(visible=False), gr.update(visible=False)]
+            return [gr.update(visible=True), gr.update(visible=True), gr.update(visible=True)]
+        return [gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)]
 
-    login_state.change(toggle_visibility, inputs=[login_state, action_state], outputs=[upload_column, train_column])
+    login_state.change(toggle_visibility, inputs=[login_state, action_state], outputs=[upload_column, train_column, synthesize_column])
 
 demo.launch(share=True)
