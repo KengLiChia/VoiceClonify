@@ -60,7 +60,10 @@ def handle_credentials(username, password, action):
 def upload_dataset(files, username, password):
     if not check_user_credentials(username, password):
         return "", "Invalid username or password."
-    
+
+    if not files:
+        return "", "No files uploaded. Please upload a dataset."
+
     base_folder = "../datasets"
     os.makedirs(base_folder, exist_ok=True)
     
@@ -79,6 +82,24 @@ def run_voice_clonify(run_name, batch_size, eval_batch_size, batch_group_size, n
                       num_eval_loader_workers, test_delay_epochs, epochs, text_cleaner, use_phonemes, phoneme_language, 
                       compute_input_seq_cache, print_step, print_eval, mixed_precision, 
                       dataset_path, cudnn_benchmark, test_sentences):
+    missing_fields = []
+    if not run_name:
+        missing_fields.append("run_name")
+    if not batch_size:
+        missing_fields.append("batch_size")
+    if not batch_group_size:
+        missing_fields.append("batch_group_size")
+    if not num_loader_workers:
+        missing_fields.append("num_loader_workers")
+    if not epochs:
+        missing_fields.append("epochs")
+    if not text_cleaner:
+        missing_fields.append("text_cleaner")
+    if not dataset_path:
+        missing_fields.append("dataset_path")
+    if missing_fields:
+        return f"Please ensure the following fields are filled: {', '.join(missing_fields)}", ""
+    
     config_params = {
         "run_name": run_name,
         "batch_size": batch_size,
@@ -103,9 +124,19 @@ def run_voice_clonify(run_name, batch_size, eval_batch_size, batch_group_size, n
 
     response = requests.post("http://localhost:5000/train", json=config_params)
     if response.status_code == 200:
-        return "Training started successfully!"
+        data = response.json()
+        return f"Training completed successfully! Output path: {data['output_path']}", data['output_path']
     else:
-        return f"Training failed with status code: {response.status_code}\n{response.text}"
+        return f"Training failed with status code: {response.status_code}\n{response.text}", ""
+
+def zip_directory(output_path):
+    zip_file = f"{output_path}.zip"
+    shutil.make_archive(output_path, 'zip', output_path)
+    return zip_file
+
+def download_zip(output_path):
+    zip_file = zip_directory(output_path)
+    return zip_file
 
 with gr.Blocks(theme=theme, title="Voice Clonify") as demo:
     gr.Markdown(
@@ -143,7 +174,7 @@ with gr.Blocks(theme=theme, title="Voice Clonify") as demo:
             )
             upload_files = gr.File(file_count="directory")
             upload = gr.Button(value="Upload", variant="primary")
-            dataset_path = gr.Textbox(label="Dataset Path", interactive=False)
+            dataset_path = gr.Textbox(label="Dataset Path", interactive=False, visible=False)
             upload_status = gr.Textbox(label="Upload Status", interactive=False)
             upload.click(upload_dataset, inputs=[upload_files, username, password], outputs=[dataset_path, upload_status])
 
@@ -180,8 +211,16 @@ with gr.Blocks(theme=theme, title="Voice Clonify") as demo:
             cudnn_benchmark = gr.Checkbox(label="CUDNN Benchmark", value=False, info="Enable CUDNN benchmark for faster training.")
 
             with gr.Row():
-                button = gr.Button("Submit", variant="primary")
-            output = gr.Textbox(label="Output")
+                with gr.Column(scale=1, min_width=600):
+                    output = gr.Textbox(label="Output")
+                    output_path = gr.Textbox(label="Output Path", visible=False)
+                with gr.Column(scale=1, min_width=600):
+                    button = gr.Button("Submit", variant="primary")
+            with gr.Row():
+                with gr.Column(scale=1, min_width=600):
+                    download_output = gr.File(label="Download Output")
+                with gr.Column(scale=1, min_width=600):
+                    download_button = gr.Button("Download", variant="primary")
 
             inputs = [
                 run_name, batch_size, eval_batch_size, batch_group_size, num_loader_workers, run_eval,
@@ -190,8 +229,9 @@ with gr.Blocks(theme=theme, title="Voice Clonify") as demo:
                 dataset_path, cudnn_benchmark, test_sentences
             ]
 
-            outputs = [output]
+            outputs = [output, output_path]
             button.click(run_voice_clonify, inputs=inputs, outputs=outputs)
+            download_button.click(download_zip, inputs=[output_path], outputs=[download_output])
 
     def toggle_visibility(login_status, action_status):
         if action_status == "Sign In" and login_status:
