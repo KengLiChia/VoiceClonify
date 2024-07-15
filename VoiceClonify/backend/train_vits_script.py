@@ -1,5 +1,6 @@
 import os
 import time
+from multiprocessing import Queue, freeze_support
 from trainer import Trainer, TrainerArgs
 from TTS.tts.configs.shared_configs import BaseDatasetConfig
 from TTS.tts.configs.vits_config import VitsConfig
@@ -7,9 +8,9 @@ from TTS.tts.datasets import load_tts_samples
 from TTS.tts.models.vits import Vits, VitsAudioConfig
 from TTS.tts.utils.text.tokenizer import TTSTokenizer
 from TTS.utils.audio import AudioProcessor
-from multiprocessing import Queue
 
 def find_metadata_file(dataset_path):
+    """Finds the metadata CSV file in the given dataset path."""
     print("Looking for metadata file in:", dataset_path)
     for file_name in os.listdir(dataset_path):
         if file_name.endswith('.csv'):
@@ -19,7 +20,8 @@ def find_metadata_file(dataset_path):
     raise FileNotFoundError("No metadata CSV file found in the dataset directory.")
 
 def train_vits(params, queue):
-    base_output_path = os.path.dirname(os.path.abspath(__file__))
+    """Trains the VITS model with the given parameters."""
+    base_output_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output")
     run_name = params.get("run_name", "vits_ljspeech")
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     output_path = os.path.join(base_output_path, f"{run_name}_{timestamp}")
@@ -89,7 +91,6 @@ def train_vits(params, queue):
     print(output_path)
 
 if __name__ == '__main__':
-    from multiprocessing import freeze_support, Queue
     freeze_support()
     queue = Queue()
     params = {

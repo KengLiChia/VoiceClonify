@@ -14,3 +14,6 @@ kengli_training_space/
 #Training dataset
 dataset/
 datasets
+
+# Output files
+output
