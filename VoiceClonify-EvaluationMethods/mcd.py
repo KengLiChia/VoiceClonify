@@ -1,44 +1,78 @@
-import numpy as np
-from scipy.io import wavfile
-from python_speech_features import mfcc
-from scipy.spatial.distance import euclidean
-import argparse
 import librosa
+import numpy as np
+import pyworld
+import pysptk
+import argparse
+import matplotlib.pyplot as plt
+from fastdtw import fastdtw
+from scipy.spatial.distance import euclidean
 
-def calculate_mcd(original, generated, num_mel_coefficients=13):
-    original_mfcc = mfcc(original, numcep=num_mel_coefficients)
-    generated_mfcc = mfcc(generated, numcep=num_mel_coefficients)
-    
-    # Align the lengths of the MFCC sequences
-    min_length = min(len(original_mfcc), len(generated_mfcc))
-    original_mfcc = original_mfcc[:min_length]
-    generated_mfcc = generated_mfcc[:min_length]
-    
-    # Compute the Euclidean distance for each frame
-    distances = [euclidean(original_mfcc[i], generated_mfcc[i]) for i in range(min_length)]
-    
-    # Calculate the average distance (MCD) with scaling factor
-    scaling_factor = 10 / np.log(10)
-    mcd = scaling_factor * np.mean(distances)
-    return mcd
+def load_wav(wav_file, sample_rate):
+    wav, _ = librosa.load(wav_file, sr=sample_rate, mono=True)
+    return wav
 
-def load_wav(filename, target_rate=22050): # this is my 22050 Hz generated
-    rate, data = wavfile.read(filename)
-    if rate != target_rate:
-        data = librosa.resample(data.astype(float), orig_sr=rate, target_sr=target_rate) # resample to 22050 Hz
-    return data
+def wav2mcep_numpy(loaded_wav, sample_rate, frame_period, alpha=0.65, fft_size=512):
+    _, sp, _ = pyworld.wav2world(loaded_wav.astype(np.double), fs=sample_rate, frame_period=frame_period, fft_size=fft_size)
+    mcep = pysptk.sptk.mcep(sp, order=13, alpha=alpha, maxiter=0, etype=1, eps=1.0E-8, min_det=0.0, itype=3)
+    return mcep
 
-def main(original_file, generated_file):
-    original = load_wav(original_file)
-    generated = load_wav(generated_file)
+def calculate_mcd_distance(ref_mcep, syn_mcep, path):
+    pathx = list(map(lambda l: l[0], path))
+    pathy = list(map(lambda l: l[1], path))
+    ref_mcep, syn_mcep = ref_mcep[pathx], syn_mcep[pathy]
+    frames_tot = ref_mcep.shape[0]
+    diff = ref_mcep - syn_mcep
+    min_cost_tot = np.sqrt((diff * diff).sum(-1)).sum()
+    return frames_tot, min_cost_tot
+
+def calculate_mcd(ref_audio_file, syn_audio_file):
+    sample_rate = 22050
+    frame_period = 5.0
+    log_spec_dB_const = 10.0 / np.log(10.0) * np.sqrt(2.0)
     
-    mcd_value = calculate_mcd(original, generated)
-    print(f"Mel Cepstral Distortion (MCD): {mcd_value}")
+    loaded_ref_wav = load_wav(ref_audio_file, sample_rate)
+    loaded_syn_wav = load_wav(syn_audio_file, sample_rate)
+    
+    ref_mcep = wav2mcep_numpy(loaded_ref_wav, sample_rate, frame_period)
+    syn_mcep = wav2mcep_numpy(loaded_syn_wav, sample_rate, frame_period)
+    
+    _, path = fastdtw(ref_mcep[:, 1:], syn_mcep[:, 1:], dist=euclidean)
+    frames_tot, min_cost_tot = calculate_mcd_distance(ref_mcep, syn_mcep, path)
+    mean_mcd = log_spec_dB_const * min_cost_tot / frames_tot
+    
+    return mean_mcd
+
+def plot_waveforms(real, generated, real_path, generated_path):
+    plt.figure(figsize=(12, 6))
+
+    plt.subplot(2, 1, 1)
+    plt.title(f"Real Speech: {real_path}")
+    plt.plot(real)
+    plt.xlabel("Time")
+    plt.ylabel("Amplitude")
+
+    plt.subplot(2, 1, 2)
+    plt.title(f"Generated Speech: {generated_path}")
+    plt.plot(generated)
+    plt.xlabel("Time")
+    plt.ylabel("Amplitude")
+
+    plt.tight_layout()
+    plt.show()
+
+def main(real_path, generated_path):
+    real, sr = librosa.load(real_path, sr=22050)
+    generated, sr = librosa.load(generated_path, sr=22050)
+
+    mcd = calculate_mcd(real_path, generated_path)
+    print(f"MCD: {mcd}")
+
+    plot_waveforms(real, generated, real_path, generated_path)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Calculate MCD between two audio files")
-    parser.add_argument("original", type=str, help="Path to the original audio file")
-    parser.add_argument("generated", type=str, help="Path to the generated audio file")
-    
+    parser = argparse.ArgumentParser(description="Calculate MCD and plot waveforms.")
+    parser.add_argument("real_path", type=str, help="Path to the real speech file.")
+    parser.add_argument("generated_path", type=str, help="Path to the generated speech file.")
+
     args = parser.parse_args()
-    main(args.original, args.generated)
+    main(args.real_path, args.generated_path)

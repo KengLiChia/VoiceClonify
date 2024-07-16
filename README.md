@@ -98,11 +98,35 @@ python ..\train_fast_pitch.py --continue_path .
 
 ## Test trained voice
 
-Below is an example to test your trained voice model
+Below is an example to test your trained voice model.
+
+### Fast Pitch
 
 ```bash
-python .\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_pitch_finetuning-June-02-2024_01+35AM-0ae693a\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_pitch_finetuning-June-02-2024_01+35AM-0ae693a\best_model_259344.pth --text "The quick brown fox jumps over the lazy dog!" --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\test.wav
+python C:\Users\krist\Documents\GitHub\VoiceClonify\TTS-0.20.3\TTS\bin\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_pitch_finetuning-June-02-2024_01+35AM-0ae693a\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_pitch_finetuning-June-02-2024_01+35AM-0ae693a\checkpoint_290000.pth --text "I think most people tend to dress pretty casually." --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fastpitch.wav
 ```
+
+### Fast Speech
+
+```bash
+python C:\Users\krist\Documents\GitHub\VoiceClonify\TTS-0.20.3\TTS\bin\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_speech_finetuning-May-08-2024_11+26PM-310580b\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_speech_finetuning-May-08-2024_11+26PM-310580b\checkpoint_300000.pth --text "The quick brown fox jumps over the lazy dog!" --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fastspeech.wav
+```
+
+### GlowTTS
+
+```bash
+python C:\Users\krist\Documents\GitHub\VoiceClonify\TTS-0.20.3\TTS\bin\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\my_glow_tts_finetuning-April-07-2024_02+58AM-310580b\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\my_glow_tts_finetuning-April-07-2024_02+58AM-310580b\checkpoint_880000.pth --text "The quick brown fox jumps over the lazy dog!" --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\glowtts.wav
+```
+
+### VITS
+
+```bash
+python C:\Users\krist\Documents\GitHub\VoiceClonify\TTS-0.20.3\TTS\bin\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits-espeak-phonemizer\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits-espeak-phonemizer\best_model_30920.pth --text "The quick brown fox jumps over the lazy dog!" --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits.wav
+```
+
+### TTS
+
+Run in `kengli_training_space` folder.
 
 ## Install Gradio
 
