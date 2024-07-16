@@ -4,3 +4,6 @@ python_speech_features
 librosa
 jiwer
 openai-whisper
+fastdtw
+pysptk
+pyworld
