@@ -230,7 +230,7 @@ with gr.Blocks(theme=theme, title="Voice Clonify") as demo:
                     output = gr.Textbox(label="Output")
                     output_path = gr.Textbox(label="Output Path", visible=False)
                 with gr.Column(scale=1, min_width=600):
-                    button = gr.Button("Submit", variant="primary")
+                    button = gr.Button("Train", variant="primary")
             with gr.Row():
                 with gr.Column(scale=1, min_width=600):
                     download_output = gr.File(label="Download Output")

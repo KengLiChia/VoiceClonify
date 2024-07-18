@@ -103,25 +103,25 @@ Below is an example to test your trained voice model.
 ### Fast Pitch
 
 ```bash
-python C:\Users\krist\Documents\GitHub\VoiceClonify\TTS-0.20.3\TTS\bin\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_pitch_finetuning-June-02-2024_01+35AM-0ae693a\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_pitch_finetuning-June-02-2024_01+35AM-0ae693a\checkpoint_290000.pth --text "The way to save money is not to spend much." --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\audio_files\fastpitch.wav
+python C:\Users\krist\Documents\GitHub\VoiceClonify\TTS-0.20.3\TTS\bin\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_pitch_finetuning-June-02-2024_01+35AM-0ae693a\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_pitch_finetuning-June-02-2024_01+35AM-0ae693a\checkpoint_290000.pth --text "The price is fair for a good antique clock." --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\audio_files\fastpitch.wav
 ```
 
 ### Fast Speech
 
 ```bash
-python C:\Users\krist\Documents\GitHub\VoiceClonify\TTS-0.20.3\TTS\bin\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_speech_finetuning-May-08-2024_11+26PM-310580b\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_speech_finetuning-May-08-2024_11+26PM-310580b\checkpoint_300000.pth --text "The way to save money is not to spend much." --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\audio_files\fastspeech.wav
+python C:\Users\krist\Documents\GitHub\VoiceClonify\TTS-0.20.3\TTS\bin\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_speech_finetuning-May-08-2024_11+26PM-310580b\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\fast_speech_finetuning-May-08-2024_11+26PM-310580b\checkpoint_300000.pth --text "The price is fair for a good antique clock." --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\audio_files\fastspeech.wav
 ```
 
 ### GlowTTS
 
 ```bash
-python C:\Users\krist\Documents\GitHub\VoiceClonify\TTS-0.20.3\TTS\bin\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\my_glow_tts_finetuning-April-07-2024_02+58AM-310580b\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\my_glow_tts_finetuning-April-07-2024_02+58AM-310580b\checkpoint_880000.pth --text "The way to save money is not to spend much." --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\audio_files\glowtts.wav
+python C:\Users\krist\Documents\GitHub\VoiceClonify\TTS-0.20.3\TTS\bin\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\my_glow_tts_finetuning-April-07-2024_02+58AM-310580b\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\my_glow_tts_finetuning-April-07-2024_02+58AM-310580b\checkpoint_880000.pth --text "The price is fair for a good antique clock." --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\audio_files\glowtts.wav
 ```
 
 ### VITS
 
 ```bash
-python C:\Users\krist\Documents\GitHub\VoiceClonify\TTS-0.20.3\TTS\bin\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits-espeak-phonemizer\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits-espeak-phonemizer\checkpoint_60000.pth --text "The way to save money is not to spend much." --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\audio_files\vits.wav
+python C:\Users\krist\Documents\GitHub\VoiceClonify\TTS-0.20.3\TTS\bin\synthesize.py --config_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits-espeak-phonemizer\config.json --model_path C:\Users\krist\Documents\GitHub\VoiceClonify\kengli_training_space\vits-espeak-phonemizer\checkpoint_60000.pth --text "The price is fair for a good antique clock." --out_path C:\Users\krist\Documents\GitHub\VoiceClonify\audio_files\vits.wav
 ```
 
 ### TTS
