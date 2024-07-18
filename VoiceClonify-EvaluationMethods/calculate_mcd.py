@@ -56,34 +56,16 @@ def plot_waveforms(real, generated, real_path, generated_path):
     plt.figure(figsize=(12, 6))
 
     plt.subplot(2, 1, 1)
-    plt.title(f"Real Speech: {real_path}")
+    plt.title(f"Real Speech")
     plt.plot(real)
     plt.xlabel("Time")
     plt.ylabel("Amplitude")
 
     plt.subplot(2, 1, 2)
-    plt.title(f"Generated Speech: {generated_path}")
+    plt.title(f"Generated Speech")
     plt.plot(generated)
     plt.xlabel("Time")
     plt.ylabel("Amplitude")
-
-    plt.tight_layout()
-    plt.show()
-
-def plot_mcep_features(ref_mcep, syn_mcep, ref_path, syn_path):
-    plt.figure(figsize=(12, 6))
-
-    plt.subplot(2, 1, 1)
-    plt.title(f"MCEP Features of Real Speech: {ref_path}")
-    plt.imshow(ref_mcep.T, aspect='auto', origin='lower')
-    plt.xlabel("Frame")
-    plt.ylabel("MCEP Coefficient")
-
-    plt.subplot(2, 1, 2)
-    plt.title(f"MCEP Features of Generated Speech: {syn_path}")
-    plt.imshow(syn_mcep.T, aspect='auto', origin='lower')
-    plt.xlabel("Frame")
-    plt.ylabel("MCEP Coefficient")
 
     plt.tight_layout()
     plt.show()
@@ -98,15 +80,7 @@ def main(real_path, generated_path):
     else:
         print("MCD calculation failed due to an error in processing the audio files.")
 
-    plot_waveforms(real, generated, real_path, generated_path)
-
-    ref_mcep = wav2mcep_simple(real)
-    syn_mcep = wav2mcep_simple(generated)
-
-    if ref_mcep is not None and syn_mcep is not None:
-        plot_mcep_features(ref_mcep, syn_mcep, real_path, generated_path)
-    else:
-        print("MCEP feature extraction failed.")
+    # plot_waveforms(real, generated, real_path, generated_path)
 
     # Save the trimmed and normalized audio files for listening
     sf.write('trimmed_normalized_real.wav', ref_wav, 22050)
@@ -120,3 +94,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     main(args.real_path, args.generated_path)
+
+# python .\calculate_mcd.py .\data\original.wav .\data\generated.wav
