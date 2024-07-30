@@ -274,7 +274,7 @@ with gr.Blocks(theme=theme, title="Voice Clonify") as demo:
                 path, status = synthesize_voice(config_file, model_file, text)
                 return path, status, path if path else None
 
-            synthesize_button.click(handle_synthesize_voice, inputs=[config_file, model_file, text], outputs=[output_path, synthesize_status])
+            synthesize_button.click(handle_synthesize_voice, inputs=[config_file, model_file, text], outputs=[output_path, synthesize_status, audio_output])
 
     def toggle_visibility(login_status, action_status):
         if action_status == "Sign In" and login_status:
